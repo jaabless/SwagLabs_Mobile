@@ -16,18 +16,18 @@ jobs:
         uses: actions/checkout@v4
 
       # Set up Java (Maven requires JDK)
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: maven
 
       # Install Node.js (needed for Appium)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22.16.0'
 
       # Install Appium + UiAutomator2 driver
       - name: Install Appium
