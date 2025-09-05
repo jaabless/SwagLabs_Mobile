@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  emulator:
+    image: katalonstudio/android-emulator:30.0.26
+    container_name: android-emulator
+    privileged: true
+    environment:
+      - DEVICE=Pixel_5
+      - APPIUM=true
+      - EMULATOR_ARGS=-no-window -gpu swiftshader_indirect -noaudio
+    ports:
+      - "5554:5554"
+      - "5555:5555"
+
+  appium:
+    image: appium/appium:latest
+    container_name: appium-server
+    ports:
+      - "4723:4723"
+    environment:
+      - APPIUM_ADDITIONAL_PARAMS=--base-path /wd/hub
+    depends_on:
+      - emulator
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swaglabs-tests
+    depends_on:
+      - appium
+      - emulator
+    environment:
+      - appiumServer=http://appium:4723/wd/hub
+      - deviceName=emulator-5554
+      - udid=emulator-5554
+      - app=/usr/src/app/apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+    volumes:
+      - .:/usr/src/app
