@@ -22,6 +22,8 @@ public class DriverUtils {
             caps.setCapability("appium:appActivity", "com.swaglabsmobileapp.SplashActivity");
             caps.setCapability("appium:noReset", false);
             caps.setCapability("appium:fullReset", true);
+            // 👇 important
+            caps.setCapability("appium:systemPort", 8300);
             driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), caps);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         }
