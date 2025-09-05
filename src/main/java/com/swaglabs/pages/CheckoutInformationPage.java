@@ -19,8 +19,7 @@ public class CheckoutInformationPage extends BasePage {
     @AndroidFindBy(accessibility = "test-CONTINUE")
     private WebElement continueButton;
 
-//    @AndroidFindBy(accessibility = "test-Error message")
-    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-Error message\"]")
+    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc='test-Error message']//android.widget.TextView")
     private WebElement errorMessage;
 
     public CheckoutInformationPage(AppiumDriver driver) {
