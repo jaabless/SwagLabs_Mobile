@@ -45,4 +45,8 @@ public class CartPage extends BasePage {
             return "0";
         }
     }
+
+    public boolean isCheckoutButtonEnabled() {
+        return checkoutButton.isEnabled();
+    }
 }
