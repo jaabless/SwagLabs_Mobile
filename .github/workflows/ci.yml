@@ -36,8 +36,8 @@ jobs:
           appium driver install uiautomator2
           appium -v
 
-      # Start emulator and Appium
-      - name: Start Emulator and Appium
+      # Start emulator
+      - name: Start Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -45,29 +45,32 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           emulator-options: -no-window -no-audio -no-boot-anim
-          script: |
-            # Start Appium server in background
-            appium --base-path /wd/hub --log-level info &
+          script: echo "Emulator started"
+
+      # Wait for emulator boot
+      - name: Wait for Emulator
+        run: |
+          adb wait-for-device
+          boot_completed=""
+          while [ -z "$boot_completed" ] || [ "$boot_completed" != "1" ]; do
+            boot_completed=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            echo "Waiting for emulator to boot..."
             sleep 5
+          done
+          echo "✅ Emulator booted!"
+          adb shell input keyevent 82
 
-            # Wait for emulator to boot completely
-            adb wait-for-device
-            boot_completed=""
-            while [ -z "$boot_completed" ] || [ "$boot_completed" != "1" ]; do
-              boot_completed=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              echo "Waiting for emulator to boot..."
-              sleep 5
-            done
-            echo "✅ Emulator booted!"
+      # Install test app
+      - name: Install Test App
+        run: adb install -r ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
 
-            # Unlock screen
-            adb shell input keyevent 82
+      # Start Appium server
+      - name: Start Appium
+        run: |
+          nohup appium --base-path /wd/hub --log-level info > appium.log 2>&1 &
+          sleep 5
 
-            # Install test app
-            adb install -r ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
-
-
-      # Run Maven tests separately
+      # Run Maven tests
       - name: Run Maven Tests
         run: mvn clean test
 
