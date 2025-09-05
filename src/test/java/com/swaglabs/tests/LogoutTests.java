@@ -19,12 +19,8 @@ public class LogoutTests extends BaseTest {
     public void testLogout() {
         ProductsPage productsPage = new ProductsPage(driver);
         Assert.assertTrue(productsPage.isFirstProductDisplayed(), "Login failed, products page not displayed");
-
          // Perform logout
         productsPage.openMenu();  // Open menu
-
-        // Assume logout button in menu
-//        driver.findElement(AppiumBy.accessibilityId("test-LOGOUT")).click();
         LoginPage loginPage = productsPage.clickLogout();
         Assert.assertTrue(loginPage.isLoginButtonDisplayed(), "Not back to login page after logout");
     }
