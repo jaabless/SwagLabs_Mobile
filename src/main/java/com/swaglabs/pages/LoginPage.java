@@ -51,4 +51,8 @@ public class LoginPage extends BasePage {
     public boolean isLoginButtonDisplayed() {
         return loginButton.isDisplayed();
     }
+
+    public boolean isLoginPageDisplayed() {
+        return usernameField.isDisplayed() && passwordField.isDisplayed() && loginButton.isDisplayed();
+    }
 }
