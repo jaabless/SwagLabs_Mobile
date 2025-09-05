@@ -1,40 +1,48 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  emulator:
-    image: katalonstudio/android-emulator:30.0.26
-    container_name: android-emulator
-    privileged: true
-    environment:
-      - DEVICE=Pixel_5
-      - APPIUM=true
-      - EMULATOR_ARGS=-no-window -gpu swiftshader_indirect -noaudio
-    ports:
-      - "5554:5554"
-      - "5555:5555"
-
   appium:
-    image: appium/appium:latest
-    container_name: appium-server
+    image: appium/appium:2.0.1
     ports:
       - "4723:4723"
     environment:
-      - APPIUM_ADDITIONAL_PARAMS=--base-path /wd/hub
-    depends_on:
-      - emulator
+      - APPIUM_LOG_LEVEL=info
+    networks:
+      - swag-labs-net
+
+  android-emulator:
+    image: budtmo/docker-android-x86-12.0
+    privileged: true
+    ports:
+      - "5554:5554"
+      - "5555:5555"
+    environment:
+      - DEVICE=Pixel_4
+      - ANDROID_AVD_HOME=/root/.android/avd
+    volumes:
+      - emulator-data:/root/.android
+    networks:
+      - swag-labs-net
 
   tests:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: swaglabs-tests
     depends_on:
       - appium
-      - emulator
-    environment:
-      - appiumServer=http://appium:4723/wd/hub
-      - deviceName=emulator-5554
-      - udid=emulator-5554
-      - app=/usr/src/app/apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+      - android-emulator
     volumes:
-      - .:/usr/src/app
+      - ./target:/app/target
+    environment:
+      - APPIUM_HOST=appium
+      - APPIUM_PORT=4723
+      - ANDROID_DEVICE=android-emulator:5554
+    networks:
+      - swag-labs-net
+
+volumes:
+  emulator-data:
+
+networks:
+  swag-labs-net:
+    driver: bridge
