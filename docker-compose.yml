@@ -11,7 +11,7 @@ services:
       - swag-labs-net
 
   android-emulator:
-    image: budtmo/docker-android-x86-12.0
+    image: katalonstudio/android-emulator:30.0.26
     privileged: true
     ports:
       - "5554:5554"
