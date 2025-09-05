@@ -1,56 +1,71 @@
-name: Swag Labs Automation CI
+name: Android Appium Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  test:
+  android-tests:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
+      # Checkout your repo
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Set up Docker Buildx for faster builds
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # Install Docker Compose
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker compose --version
-
-      # Start Docker containers (Appium, emulator, tests)
-      - name: Start Docker containers
-        run: |
-          docker compose up --build -d
-          # Wait for emulator to be ready (adjust timeout if needed)
-          sleep 60
-
-      # Run tests
-      - name: Run tests
-        run: |
-          docker compose exec -T tests mvn test
-
-      # Collect and upload test results
-      - name: Upload TestNG reports
-        if: always()
-        uses: actions/upload-artifact@v4
+      # Set up Java (Maven requires JDK)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          name: testng-reports
-          path: target/surefire-reports/
-          retention-days: 7
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
 
-      # Stop and clean up containers
-      - name: Stop Docker containers
-        if: always()
+      # Install Node.js (needed for Appium)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # Install Appium + drivers
+      - name: Install Appium
         run: |
-          docker compose down
+          npm install -g appium@latest
+          appium driver install uiautomator2
+          appium -v
+
+      # Start emulator and run tests
+      - name: Run Emulator + Appium + Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          emulator-options: -no-window -no-audio -no-boot-anim
+          script: |
+            # Start Appium server in background
+            appium --base-path /wd/hub --log-level info &
+
+            # Wait for server to come up
+            sleep 10
+
+            # Verify adb is working
+            adb devices
+
+            # Install test app into emulator
+            adb install ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+
+            # Run Maven tests
+            mvn clean test
+
+      # Cache Maven deps for faster builds
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
