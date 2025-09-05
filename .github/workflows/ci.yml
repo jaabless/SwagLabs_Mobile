@@ -16,11 +16,11 @@ jobs:
         uses: actions/checkout@v4
 
       # Set up Java (Maven requires JDK)
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: maven
 
       # Install Node.js (needed for Appium)
@@ -29,14 +29,14 @@ jobs:
         with:
           node-version: '18'
 
-      # Install Appium + drivers
+      # Install Appium + UiAutomator2 driver
       - name: Install Appium
         run: |
           npm install -g appium@latest
           appium driver install uiautomator2
           appium -v
 
-      # Start emulator and run tests
+      # Run emulator, wait for boot, install app, run tests
       - name: Run Emulator + Appium + Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -48,15 +48,23 @@ jobs:
           script: |
             # Start Appium server in background
             appium --base-path /wd/hub --log-level info &
+            sleep 5
 
-            # Wait for server to come up
-            sleep 10
+            # Wait for emulator to boot completely
+            adb wait-for-device
+            boot_completed=""
+            while [ -z "$boot_completed" ]; do
+              boot_completed=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              echo "Waiting for emulator to boot..."
+              sleep 5
+            done
+            echo "✅ Emulator booted!"
 
-            # Verify adb is working
-            adb devices
+            # Unlock screen
+            adb shell input keyevent 82
 
-            # Install test app into emulator
-            adb install ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+            # Install test app
+            adb install -r ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
 
             # Run Maven tests
             mvn clean test
