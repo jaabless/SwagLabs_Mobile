@@ -1,44 +1,56 @@
-name: Android UI Tests
+name: Swag Labs Automation CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  e2e-tests:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # Set up Docker Buildx for faster builds
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Build and run Docker Compose
+      # Install Docker Compose
+      - name: Install Docker Compose
         run: |
-          docker-compose up --build --abort-on-container-exit
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker compose --version
 
-      - name: Show test results
-        if: always()
+      # Start Docker containers (Appium, emulator, tests)
+      - name: Start Docker containers
         run: |
-          docker logs swaglabs-tests || true
-          mkdir -p test-results
-          docker cp swaglabs-tests:/usr/src/app/target/surefire-reports ./test-results
+          docker compose up --build -d
+          # Wait for emulator to be ready (adjust timeout if needed)
+          sleep 60
 
-      - name: Upload Test Report
+      # Run tests
+      - name: Run tests
+        run: |
+          docker compose exec -T tests mvn test
+
+      # Collect and upload test results
+      - name: Upload TestNG reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: surefire-reports
-          path: ./test-results
+          name: testng-reports
+          path: target/surefire-reports/
+          retention-days: 7
+
+      # Stop and clean up containers
+      - name: Stop Docker containers
+        if: always()
+        run: |
+          docker compose down
