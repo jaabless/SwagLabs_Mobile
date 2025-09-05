@@ -27,7 +27,7 @@ public class CheckoutTests extends BaseTest {
                 {testData.getProperty("first_name"), testData.getProperty("last_name"), testData.getProperty("zip_code"), true, ""},
                 {testData.getProperty("empty"), testData.getProperty("last_name"), testData.getProperty("zip_code"), false, "First Name is required"},
                 {testData.getProperty("first_name"), testData.getProperty("empty"), testData.getProperty("zip_code"), false, "Last Name is required"},
-                {testData.getProperty("first_name"), testData.getProperty("last_name"), testData.getProperty("empty"), false, "Zip/Postal Code is required"},
+                {testData.getProperty("first_name"), testData.getProperty("last_name"), testData.getProperty("empty"), false, "Postal Code is required"},
                 {testData.getProperty("special_chars"), testData.getProperty("last_name"), testData.getProperty("zip_code"), false, "First Name is required"}
         };
     }
