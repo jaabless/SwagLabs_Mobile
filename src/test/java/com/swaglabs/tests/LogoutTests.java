@@ -1,6 +1,10 @@
 package com.swaglabs.tests;
 
 import io.appium.java_client.AppiumBy;
+import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -16,6 +20,9 @@ public class LogoutTests extends BaseTest {
     }
 
     @Test
+    @Description("Verify logout functionality after successful login")
+    @Story("Logout Functionality")
+    @Severity(SeverityLevel.NORMAL)
     public void testLogout() {
         ProductsPage productsPage = new ProductsPage(driver);
         Assert.assertTrue(productsPage.isFirstProductDisplayed(), "Login failed, products page not displayed");

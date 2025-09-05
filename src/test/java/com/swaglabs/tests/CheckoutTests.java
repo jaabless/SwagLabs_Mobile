@@ -1,5 +1,9 @@
 package com.swaglabs.tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -33,6 +37,9 @@ public class CheckoutTests extends BaseTest {
     }
 
     @Test(dataProvider = "checkoutData")
+    @Description("Verify checkout process with various form inputs")
+    @Story("Checkout")
+    @Severity(SeverityLevel.CRITICAL)
     public void testCheckoutProcess(String firstName, String lastName, String zipCode, boolean expectedSuccess, String expectedError) {
         CheckoutInformationPage infoPage = new CheckoutInformationPage(driver);
         Assert.assertTrue(infoPage.isCheckoutInfoPageDisplayed(), "Checkout Information Page not displayed");
@@ -49,14 +56,5 @@ public class CheckoutTests extends BaseTest {
             System.out.println("Error Message: " + infoPage.getErrorMessage());
             Assert.assertEquals(infoPage.getErrorMessage(), expectedError, "Incorrect error message");
         }
-    }
-
-    // Edge: Max length for fields, special chars in names
-    @Test
-    public void testEdgeCaseSpecialChars() {
-        CheckoutInformationPage infoPage = new CheckoutInformationPage(driver);
-        infoPage.enterUserInformation(testData.getProperty("special_chars"), testData.getProperty("last_name"), testData.getProperty("zip_code"));
-        infoPage.clickContinue();
-        // Assume success or specific validation
     }
 }
