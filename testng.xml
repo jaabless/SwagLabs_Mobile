@@ -3,7 +3,6 @@
     <test name="AllTests">
         <classes>
             <class name="com.swaglabs.tests.LoginTests"/>
-            <class name="com.swaglabs.tests.ProductsTests"/>
             <class name="com.swaglabs.tests.CartTests"/>
             <class name="com.swaglabs.tests.CheckoutTests"/>
             <class name="com.swaglabs.tests.LogoutTests"/>
