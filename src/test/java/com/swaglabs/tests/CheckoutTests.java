@@ -38,7 +38,7 @@ public class CheckoutTests extends BaseTest {
 
     @Test(dataProvider = "checkoutData")
     @Description("Verify checkout process with various form inputs")
-    @Story("Checkout")
+    @Story("Checkout Functionality")
     @Severity(SeverityLevel.CRITICAL)
     public void testCheckoutProcess(String firstName, String lastName, String zipCode, boolean expectedSuccess, String expectedError) {
         CheckoutInformationPage infoPage = new CheckoutInformationPage(driver);

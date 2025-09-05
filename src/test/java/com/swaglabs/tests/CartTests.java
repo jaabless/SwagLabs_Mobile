@@ -26,7 +26,7 @@ public class CartTests extends BaseTest {
 
     @Test
     @Description("Verify adding an item to the cart updates the cart count")
-    @Story("Add to Cart Functionality")
+    @Story("Cart Functionality")
     @Severity(SeverityLevel.CRITICAL)
     public void testAddItemToCart() {
         CartPage cartPage = new CartPage(driver);
@@ -35,7 +35,7 @@ public class CartTests extends BaseTest {
 
     @Test
     @Description("Verify removing an item from the cart updates the cart count")
-    @Story("Remove from Cart Functionality")
+    @Story("Cart Functionality")
     @Severity(SeverityLevel.NORMAL)
     public void testAddAndRemoveFromCart() {
         CartPage cartPage = new CartPage(driver);
@@ -50,7 +50,7 @@ public class CartTests extends BaseTest {
 
     @Test
     @Description("Verify proceeding to checkout from the cart navigates to the checkout information page")
-    @Story("Proceed to Checkout Functionality")
+    @Story("Cart Functionality")
     @Severity(SeverityLevel.NORMAL)
     public void testProceedToCheckout() {
         CartPage cartPage = new CartPage(driver);
@@ -61,7 +61,7 @@ public class CartTests extends BaseTest {
 
     @Test
     @Description("Verify checkout with empty cart does not proceed")
-    @Story("Checkout with Empty Cart")
+    @Story("Cart Functionality")
     @Severity(SeverityLevel.MINOR)
     public void testCheckoutWithEmptyCart() {
         CartPage cartPage = new CartPage(driver);
