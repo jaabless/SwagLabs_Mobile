@@ -16,8 +16,11 @@ public class LoginPage extends BasePage {
     @AndroidFindBy(accessibility = "test-LOGIN")
     private WebElement loginButton;
 
-    @AndroidFindBy(accessibility = "test-Error message")
+//    @AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Sorry, this user has been locked out.\"]")
+//    private WebElement errorMessage;
+    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc='test-Error message']//android.widget.TextView")
     private WebElement errorMessage;
+
 
     public LoginPage(AppiumDriver driver) {
         super(driver);
@@ -36,7 +39,7 @@ public class LoginPage extends BasePage {
     }
 
     public String getErrorMessage() {
-        return getTextFromElement(errorMessage);
+        return getTextFromElement(errorMessage).trim();
     }
 
     public void login(String username, String password) {
