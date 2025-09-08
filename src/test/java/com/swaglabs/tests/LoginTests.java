@@ -29,10 +29,10 @@ public class LoginTests extends BaseTest {
         return new Object[][]{
                 {testData.getProperty("valid_username"), testData.getProperty("valid_password"), true, ""},
                 {testData.getProperty("invalid_username"), testData.getProperty("invalid_password"), false, "Username and password do not match any user in this service."},
-//                {testData.getProperty("locked_username"), testData.getProperty("valid_password"), false, "Sorry, this user has been locked out."},
-//                {testData.getProperty("empty"), testData.getProperty("valid_password"), false, "Username is required"},
-//                {testData.getProperty("valid_username"), testData.getProperty("empty"), false, "Password is required"},
-//                {testData.getProperty("valid_username"), testData.getProperty("special_chars"), false, "Username and password do not match any user in this service."}  // Edge: special chars
+                {testData.getProperty("locked_username"), testData.getProperty("valid_password"), false, "Sorry, this user has been locked out."},
+                {testData.getProperty("empty"), testData.getProperty("valid_password"), false, "Username is required"},
+                {testData.getProperty("valid_username"), testData.getProperty("empty"), false, "Password is required"},
+                {testData.getProperty("valid_username"), testData.getProperty("special_chars"), false, "Username and password do not match any user in this service."}  // Edge: special chars
         };
     }
 
