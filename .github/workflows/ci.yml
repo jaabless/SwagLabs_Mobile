@@ -64,6 +64,7 @@ jobs:
       - name: Install Test App
         run: adb install -r ./apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
 
+
       # Start Appium server
       - name: Start Appium
         run: |
